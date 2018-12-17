@@ -3,9 +3,8 @@ import './RecipeInput.css';
 
 class RecipeInput extends Component {
     static defaultProps = {
-        onClose() {
-
-        }
+        onClose() {},
+        onSave() {}
     }
 
     constructor(props) {
@@ -20,6 +19,7 @@ class RecipeInput extends Component {
         this.handleChange = this.handleChange.bind(this);
         this.handleNewIngredient = this.handleNewIngredient.bind(this);
         this.handleChangIng = this.handleChangIng.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     handleChange(event) {
@@ -32,11 +32,22 @@ class RecipeInput extends Component {
     }
 
     handleChangIng(event) {
-        const index = Number(event.target.name.split('_')[1]);
+        const index = Number(event.target.name.split('-')[1]);
         const ingredients = this.state.ingredients.map((ing, i) => (
             i === index ? event.target.value : ing
         ));
         this.setState({ingredients});
+    }
+
+    handleSubmit(event) {
+        event.preventDefault();
+        this.props.onSave({...this.state});
+        this.setState({
+            title: '',
+            instructions: '',
+            ingredients: [''],
+            img: ''
+        });
     }
 
     render() {
@@ -44,7 +55,7 @@ class RecipeInput extends Component {
         const {onClose} = this.props;
         let inputs = ingredients.map((ing, i) => (
             <div className="recipe-form-line" key={`ingredient-${i}`}>
-                <label>{i + 1})
+                <label>{i + 1}.
                     <input
                         type='text'
                         name={`ingredient-${i}`}
@@ -60,7 +71,7 @@ class RecipeInput extends Component {
 
         return (
             <div className="recipe-form-container">
-              <form className='recipe-form' onSubmit={() => {}}>
+              <form className='recipe-form' onSubmit={this.handleSubmit}>
                 <button
                   type="button"
                   className="close-button"
